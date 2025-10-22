@@ -1,34 +1,36 @@
-// process.php
 <?php
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $email = $_POST["email"];
-    $email = trim($email);
+require __DIR__ . '/../vendor/autoload.php';
+
+use Respect\Validation\Validator as v;
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $name  = $_POST['name'] ?? '';
+    $email = $_POST['email'] ?? '';
     $errors = [];
 
-    // Валідація
-    if (trim($email) === '') {
-        $errors[] = "Поле 'Email' не може бути порожнім.";
+    if (!v::stringType()->notEmpty()->validate($name)) {
+        $errors[] = 'Поле "Ім\'я" не може бути порожнім.';
     }
 
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $errors[] = "Введіть коректний email.";
+    if (!v::email()->validate($email)) {
+        $errors[] = 'Введіть коректний email.';
     }
 
     if ($errors) {
-        echo "<p>Виникли помилки:</p>";
-        echo "<ul>";
+        echo '<p class="error">Виникли помилки:</p>';
+        echo '<ul>';
         foreach ($errors as $error) {
-            echo "<li>" . htmlspecialchars($error) . "</li>";
+            echo '<li>' . htmlspecialchars($error) . '</li>';
         }
-        echo "</ul>";
-        echo "<p><a href='form.html'>Назад до форми</a></p>";
+        echo '</ul>';
+        echo '<p><a href="./public/form.html">Назад до форми</a></p>';
     } else {
-        echo "<p>Дякуємо, " . htmlspecialchars($email) . "</p>";
-        echo "<p>Ви успішно заповнили форму. " . htmlspecialchars($email) . "</p>";
+        echo '<p>Дякуємо, ' . htmlspecialchars($name) . '</p>';
+        echo '<p>Ви успішно заповнили форму. ' . htmlspecialchars($email) . '</p>';
     }
-
-    echo "<p>Будь ласка, відкрийте <a href='form.html'>форму</a></p>";
+} else {
+    echo '<p>Будь ласка, відкрийте <a href="./public/form.html">форму</a></p>';
 }
 
 ?>
